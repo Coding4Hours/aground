@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<mod>
+    <name>Kongregate</name>
+    <description>Adds the Kongregate specials to the game.</description>
+    <author>Fancy Fish Games</author>
+    <version>1.0.0</version>
+    <init>
+		<animation id="ant_door.idle" equals="single" />
+		<animation id="ant_door.opening" count="6" />
+		<animation id="ant_door.closing" count="6" reverse="true" />
+		<structure id="ant_door" extends="cave" image="ant_door.png" animation="ant_door" />
+		<area id="ant_hive" width="64" height="64" temporary="true">
+			<action>for(y in 31...35) for(x in 31...35) setBack(x, y, "sci1.dirt");</action>
+			<set id="chests" value="[]" /><set id="i" value="0" />
+			<action>chests.push({item:"fruit", count:20});</action>
+			<action>chests.push({item:"eggs", count:20});</action>
+			<action>chests.push({item:"sugar", count:20});</action>
+			<place x="1" y="1" width="62" height="62" count="chests.length" pad="5" accept="Math.abs(x-32) > 5 || Math.abs(y-32) > 5">
+				setBack(x, y, "sci1.dirt"); var chest = chests[i++];
+				var o = ObjectInfo.make("treasure_chest", x*Tile.SIZE, y*Tile.SIZE); area.addObject(o);
+				o.inventory.addItems(Item.get(chest.item), chest.count);
+			</place>
+			<maze floor="sci1.dirt" wall="sci1.dirt" width="64" height="64" /><light x="32" y="32" size="3" />
+			<tiles id="blackstone" x="0" /><tiles id="blackstone" x="63" />
+			<tiles id="blackstone" y="0" /><tiles id="blackstone" y="63" />
+			<ore id="quartz" start="0.8" end="1.0" percent="0.0025" tile="sci1.dirt" />
+			<ore id="sulfur" start="0.4" end="1.0" percent="0.0125" tile="sci1.dirt" />
+			<ore id="sulfur" start="0.2" end="0.4" percent="0.000625" tile="sci1.dirt" />
+			<ore id="coal" start="0.0" end="0.8" percent="0.0375" tile="sci1.dirt" />
+			<ore id="gold" start="0.8" end="1.0" percent="0.000625" tile="sci1.dirt" />
+			<objects id="ant" start="0" end="1" count="32" tile="sci1.dirt" />
+			<structure id="ant_door" x="32" y="32" />
+		</area>
+		<area id="start" extends="start">
+			<onLoad>
+				<section if="area.getStructureById('ant_door') == null">
+					<set id="cave_x" value="64" />
+					<structure id="ant_door" x="cave_x" y="72">
+						<teleport area="ant_hive" x="32" y="32" allowReturn="true" />
+					</structure>
+					<spreadTiles x="cave_x" y="72" eval="'markings'+randInt(1,9)" layer="back" on="stone" count="50" />
+				</section>
+			</onLoad>
+		</area>
+    </init>
+</mod>
